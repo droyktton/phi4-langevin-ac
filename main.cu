@@ -7,6 +7,10 @@
 // sample) in a phi=-1 background. Every tout time units the domain wall
 // is detected and written out (walls_*.dat), together with a line of
 // summary observables (timeseries_*.dat).
+//
+// Associated paper: P. Domenichini et al., "Curvature-driven ac-assisted
+// creep dynamics of magnetic domain walls", Phys. Rev. B 103, L220409
+// (2021), arXiv:2012.09377.
 #include <iostream>
 #include <fstream>
 #include <cstdio>

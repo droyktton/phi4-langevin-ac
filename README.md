@@ -8,23 +8,37 @@ level set, as a function of time.
 
 ![demo: phi field (grey) and phi=0 level curves at different times](docs/demo_grid.png)
 
-The model is the same as in A. B. Kolton, E. E. Ferrero, and A. Rosso,
-"Depinning free of the elastic approximation," Phys. Rev. B **108**,
-174201 (2023) ([arXiv:2306.13415](https://arxiv.org/abs/2306.13415));
-see [vmc-phi4-depinning](https://github.com/droyktton/vmc-phi4-depinning).
-The problem is different: this code does not study the quasistatic
-depinning transition. It follows the real-time stochastic dynamics of a
-closed domain wall under an oscillating drive.
+This code is associated with:
+
+> P. Domenichini, F. N. Paris, M. G. Capeluto, M. Granada, J.-M. George,
+> G. Pasquini, and A. B. Kolton, "Curvature-driven ac-assisted creep
+> dynamics of magnetic domain walls," Phys. Rev. B **103**, L220409 (2021),
+> [doi:10.1103/PhysRevB.103.L220409](https://doi.org/10.1103/PhysRevB.103.L220409),
+> [arXiv:2012.09377](https://arxiv.org/abs/2012.09377).
+
+That paper studies a magnetic bubble domain in an ultra-thin film. A
+weak zero-bias AC field assists the curvature-driven collapse of the
+bubble, which is otherwise unobservably slow because of quenched
+disorder. This code simulates the same setting with a phi^4 field model:
+a circular domain in a disordered medium under a zero-bias AC field, at
+finite temperature. See [Citing](#citing).
+
+The phi^4 model with random-bond disorder is the one used in
+[vmc-phi4-depinning](https://github.com/droyktton/vmc-phi4-depinning)
+(Kolton, Ferrero & Rosso, Phys. Rev. B **108**, 174201 (2023)). That
+code solves the quasistatic depinning problem instead.
 
 ## Contents
 
 - [Quick start](#quick-start)
 - [Model](#model)
 - [Numerical method](#numerical-method)
+- [Requirements](#requirements)
 - [Build](#build)
 - [Run](#run)
 - [Output files](#output-files)
 - [Level curves phi=0](#level-curves-phi0)
+- [Post-analysis scripts](#post-analysis-scripts)
 - [Demo](#demo)
 - [Checks](#checks)
 - [Repository layout](#repository-layout)
@@ -108,20 +122,59 @@ The program also computes:
 - the mean and variance of the distance from each wall point to that
   center of mass. The variance measures the contour roughness.
 
+## Requirements
+
+**Simulation (C++/CUDA)**
+
+- An NVIDIA GPU and driver.
+- The CUDA toolkit (`nvcc`), which includes Thrust. The code is
+  C++14-compliant CUDA and uses only core Thrust algorithms plus the
+  device intrinsics `cospif`/`sincospif`. Any reasonably recent CUDA
+  (>= 10) should work, but only the version below was tested.
+- A host C++ compiler supported by your `nvcc` (e.g. `gcc`).
+- `make`.
+- [Random123](https://www.deshawresearch.com/resources_random123.html)
+  (counter-based RNG). It is vendored in `Random123/` and header-only,
+  so nothing needs to be installed.
+
+**Post-analysis (Python)** — see [`requirements.txt`](requirements.txt)
+
+- Python >= 3.8.
+- `numpy`.
+- `matplotlib` (>= 3.6, which pulls in `contourpy`).
+- `contourpy`, used for marching squares in `extract_contours.py`.
+- `pillow`, only for `plot_contours.py --gif`.
+
+```
+python3 -m pip install -r requirements.txt
+```
+
+The demo (`scripts/run_demo.sh`) additionally needs `bash`.
+
+**Tested environment**
+
+| component | version |
+|-----------|---------|
+| OS | Ubuntu 24.04.4 LTS (kernel 6.8) |
+| GPU | NVIDIA RTX A4000 Laptop GPU (compute capability 8.6) |
+| NVIDIA driver | 580.173.02 |
+| CUDA toolkit / `nvcc` | 12.3 (V12.3.103, from NVIDIA HPC SDK 24.1) |
+| Thrust | 2.2.0 (bundled with CUDA 12.3) |
+| host compiler | gcc 9.5.0 |
+| Python | 3.13.11 |
+| numpy / matplotlib / contourpy / pillow | 2.4.6 / 3.10.9 / 1.3.3 / 12.2.0 |
+
 ## Build
 
-Requires the NVIDIA CUDA toolkit (`nvcc`, C++14) and a GPU. The only
-dependency is `Random123/`, which is vendored and header-only.
-
 ```
-make                    # ./phi4langevin, default arch sm_61
-make ARCH=sm_86         # compile for a specific GPU architecture
+make                    # ./phi4langevin, default arch sm_61 (PTX runs on newer GPUs too)
+make ARCH=sm_86         # compile natively for your GPU's compute capability
 make CEL=2.0            # change c (or EPSILON0, R0)
+make clean
 ```
 
-The analysis scripts need Python 3 with `numpy`, `matplotlib` and
-`contourpy` (the latter comes with matplotlib >= 3.6). `pillow` is also
-needed for GIFs.
+`ARCH` is passed to `nvcc -arch`. Look up your GPU's compute capability
+with `nvidia-smi --query-gpu=compute_cap --format=csv`.
 
 ## Run
 
@@ -222,6 +275,102 @@ each curve as a separate line.
   vs `t`;
 - with `--gif`, an animation.
 
+## Post-analysis scripts
+
+All scripts live in `scripts/` and are plain Python 3, except
+`run_demo.sh`. Each one prints its usage with `--help`. They read the
+files described in [Output files](#output-files) and get `L`, `h0` and
+`f` from the `logfile.dat` in the same directory.
+
+### `plot_wall_evolution.py` — wall, effective radius and polar profile
+
+```
+python3 scripts/plot_wall_evolution.py walls_seed<S>_nseed<N>.dat [--ntimes 8] [--L 512]
+```
+
+- **Input:** `walls_seed<S>_nseed<N>.dat` and the matching
+  `timeseries_seed<S>_nseed<N>.dat`. No snapshots are needed.
+- **Output:** `seed<S>_nseed<N>_evolution.png`, with three panels:
+  - (a) the wall crossings at `--ntimes` evenly spaced times;
+  - (b) `R_eff(t)` together with `h(t)`;
+  - (c) `r(theta)`, the wall distance to the domain's center of mass, at
+    the same times.
+- **Options:**
+  - `--ntimes`: the number of times drawn.
+  - `--L`: the lattice size, if there is no `logfile.dat` next to the
+    file.
+
+### `extract_contours.py` — phi=0 level curves as ordered closed polylines
+
+```
+python3 scripts/extract_contours.py <dir> [--run seed<S>_nseed<N>] [--min-length 8] [--no-smooth]
+```
+
+- **Input:** the `config_t<t>_seed<S>_nseed<N>.dat` snapshots in `<dir>`,
+  which requires a run with `--tconf > 0`.
+- **Output:** `contours_<run>.dat` and `contours_<run>.csv` in `<dir>`.
+  The format is described in [Level curves phi=0](#level-curves-phi0).
+- **Method:**
+  1. 5-point smoothing (the same as the GPU detector).
+  2. `contourpy` marching squares at level 0 on the field padded
+     periodically by one row and one column.
+  3. Stitching of the open pieces that end on the box border, by
+     matching endpoints modulo `L`. This gives curves in unwrapped
+     coordinates plus their winding numbers.
+  4. Per-curve statistics: length, shoelace area, centroid folded into
+     the box, and `inside`, the sign of the field on the interior side
+     decided by a majority vote over all segments.
+- **Options:**
+  - `--run`: selects a run when `<dir>` holds several.
+  - `--min-length`: drops tiny loops, e.g. single-site thermal flips.
+  - `--no-smooth`: traces the raw field.
+
+### `plot_contours.py` — figures and animation of the level curves
+
+```
+python3 scripts/plot_contours.py <dir>/contours_<run>.dat [--panels 12] [--gif]
+```
+
+- **Input:** `contours_<run>.dat`. The snapshots in the same directory
+  are drawn as a grey background.
+- **Output:**
+  - `contours_<run>_grid.png`: `--panels` times, each curve in its own
+    color, with `t`, the number of curves and `h(t)` in the title.
+  - `contours_<run>_ncurves.png`: the number of curves, the total wall
+    length and the net enclosed `+` area (`+` domains minus `-` holes)
+    vs `t`, with `h(t)`.
+  - `contours_<run>.gif` (with `--gif`): all snapshots, 6 fps.
+
+### `run_demo.sh` — end-to-end demo
+
+```
+scripts/run_demo.sh [outdir]
+```
+
+It builds the code and runs the simulation of the [Demo](#demo) into
+`outdir` (default `demo/`, cleaning previous outputs there). Then it
+runs the three scripts above in order.
+
+### Typical workflow
+
+```
+./phi4langevin ... --tout 5 --tconf 10 --seed S --noise-seed N   # simulate
+python3 scripts/plot_wall_evolution.py walls_seedS_nseedN.dat     # quick look (no snapshots needed)
+python3 scripts/extract_contours.py . --min-length 8              # ordered closed curves -> .dat/.csv
+python3 scripts/plot_contours.py contours_seedS_nseedN.dat --gif  # figures of the level curves
+```
+
+For your own analysis (curve length, area, number of pieces, `r(theta)`
+spectra...), `contours_<run>.csv` is the per-curve table. The helpers
+`read_contours()` in `plot_contours.py`, and `periodic_contours()` /
+`curve_stats()` in `extract_contours.py`, can be imported from Python:
+
+```python
+import sys; sys.path.insert(0, "scripts")
+from plot_contours import read_contours
+frames = read_contours("demo/contours_seed1_nseed2.dat")   # [(t, [(header, xy), ...]), ...]
+```
+
 ## Demo
 
 ```
@@ -288,8 +437,34 @@ Random123/                     vendored counter-based RNG (D. E. Shaw Research)
 
 ## Citing
 
-If you use this code, please cite the paper that introduced the model
-setup:
+If you use this code, please cite:
+
+```bibtex
+@article{PhysRevB.103.L220409,
+  title         = {Curvature-driven ac-assisted creep dynamics of magnetic domain walls},
+  author        = {Domenichini, P. and Paris, F. N. and Capeluto, M. G. and Granada, M.
+                   and George, J.-M. and Pasquini, G. and Kolton, A. B.},
+  journal       = {Phys. Rev. B},
+  volume        = {103},
+  issue         = {22},
+  pages         = {L220409},
+  numpages      = {5},
+  year          = {2021},
+  month         = {Jun},
+  publisher     = {American Physical Society},
+  doi           = {10.1103/PhysRevB.103.L220409},
+  url           = {https://doi.org/10.1103/PhysRevB.103.L220409},
+  eprint        = {2012.09377},
+  archivePrefix = {arXiv},
+  primaryClass  = {cond-mat.dis-nn}
+}
+```
+
+(Preprint: [arXiv:2012.09377](https://arxiv.org/abs/2012.09377). arXiv's
+journal-ref lists the article as "220409". The published article number
+is **L220409**, because it appeared as a Letter.)
+
+The phi^4 model with random-bond disorder follows:
 
 ```bibtex
 @article{PhysRevB.108.174201,
@@ -304,6 +479,9 @@ setup:
   doi       = {10.1103/PhysRevB.108.174201}
 }
 ```
+
+A machine-readable [`CITATION.cff`](CITATION.cff) is included, so GitHub
+shows a "Cite this repository" button.
 
 ## License
 

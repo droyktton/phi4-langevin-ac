@@ -1,0 +1,6 @@
+# Python dependencies of the post-analysis scripts in scripts/
+# (tested with numpy 2.4.6, matplotlib 3.10.9, contourpy 1.3.3, pillow 12.2.0)
+numpy
+matplotlib>=3.6
+contourpy
+pillow  # only for plot_contours.py --gif

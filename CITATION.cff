@@ -1,0 +1,66 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the article it is associated with."
+title: "phi4-langevin-ac: Langevin dynamics of a circular domain in the disordered phi^4 model under an AC field"
+type: software
+authors:
+  - family-names: Kolton
+    given-names: Alejandro B.
+license: MIT
+repository-code: "https://github.com/droyktton/phi4-langevin-ac"
+keywords:
+  - domain walls
+  - creep
+  - AC field
+  - phi^4 model
+  - quenched disorder
+  - Langevin dynamics
+  - CUDA
+preferred-citation:
+  type: article
+  title: "Curvature-driven ac-assisted creep dynamics of magnetic domain walls"
+  authors:
+    - family-names: Domenichini
+      given-names: P.
+    - family-names: Paris
+      given-names: F. N.
+    - family-names: Capeluto
+      given-names: M. G.
+    - family-names: Granada
+      given-names: M.
+    - family-names: George
+      given-names: J.-M.
+    - family-names: Pasquini
+      given-names: G.
+    - family-names: Kolton
+      given-names: A. B.
+  journal: "Physical Review B"
+  volume: 103
+  issue: 22
+  start: "L220409"
+  year: 2021
+  month: 6
+  doi: "10.1103/PhysRevB.103.L220409"
+  url: "https://doi.org/10.1103/PhysRevB.103.L220409"
+  identifiers:
+    - type: doi
+      value: "10.1103/PhysRevB.103.L220409"
+      description: "Journal article"
+    - type: other
+      value: "arXiv:2012.09377"
+      description: "Preprint (https://arxiv.org/abs/2012.09377)"
+references:
+  - type: article
+    title: "Depinning free of the elastic approximation"
+    authors:
+      - family-names: Kolton
+        given-names: Alejandro B.
+      - family-names: Ferrero
+        given-names: Ezequiel E.
+      - family-names: Rosso
+        given-names: Alberto
+    journal: "Physical Review B"
+    volume: 108
+    issue: 17
+    start: "174201"
+    year: 2023
+    doi: "10.1103/PhysRevB.108.174201"
