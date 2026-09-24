@@ -5,6 +5,8 @@ type: software
 authors:
   - family-names: Kolton
     given-names: Alejandro B.
+  - name: "Claude (Anthropic)"
+    website: "https://www.anthropic.com/claude"
 license: MIT
 repository-code: "https://github.com/droyktton/phi4-langevin-ac"
 keywords:
