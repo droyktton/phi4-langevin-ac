@@ -1,0 +1,8 @@
+phi4langevin
+*.o
+*.dat
+*.png
+logfile.dat
+data/
+__pycache__/
+demo/
