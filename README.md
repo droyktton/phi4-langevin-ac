@@ -437,7 +437,11 @@ Random123/                     vendored counter-based RNG (D. E. Shaw Research)
 
 ## Citing
 
-If you use this code, please cite:
+If you use this code, please cite the associated paper. The preprint is
+[arXiv:2012.09377](https://arxiv.org/abs/2012.09377). arXiv's journal-ref
+lists the article as "220409", but the published article number is
+**L220409**, because it appeared as a Letter. GitHub's "Cite this
+repository" button uses [`CITATION.cff`](CITATION.cff).
 
 ```bibtex
 @article{PhysRevB.103.L220409,
@@ -459,29 +463,6 @@ If you use this code, please cite:
   primaryClass  = {cond-mat.dis-nn}
 }
 ```
-
-(Preprint: [arXiv:2012.09377](https://arxiv.org/abs/2012.09377). arXiv's
-journal-ref lists the article as "220409". The published article number
-is **L220409**, because it appeared as a Letter.)
-
-The phi^4 model with random-bond disorder follows:
-
-```bibtex
-@article{PhysRevB.108.174201,
-  title     = {Depinning free of the elastic approximation},
-  author    = {Kolton, Alejandro B. and Ferrero, Ezequiel E. and Rosso, Alberto},
-  journal   = {Phys. Rev. B},
-  volume    = {108},
-  issue     = {17},
-  pages     = {174201},
-  year      = {2023},
-  publisher = {American Physical Society},
-  doi       = {10.1103/PhysRevB.108.174201}
-}
-```
-
-A machine-readable [`CITATION.cff`](CITATION.cff) is included, so GitHub
-shows a "Cite this repository" button.
 
 ## License
 

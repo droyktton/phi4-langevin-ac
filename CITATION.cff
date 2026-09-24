@@ -48,19 +48,3 @@ preferred-citation:
     - type: other
       value: "arXiv:2012.09377"
       description: "Preprint (https://arxiv.org/abs/2012.09377)"
-references:
-  - type: article
-    title: "Depinning free of the elastic approximation"
-    authors:
-      - family-names: Kolton
-        given-names: Alejandro B.
-      - family-names: Ferrero
-        given-names: Ezequiel E.
-      - family-names: Rosso
-        given-names: Alberto
-    journal: "Physical Review B"
-    volume: 108
-    issue: 17
-    start: "174201"
-    year: 2023
-    doi: "10.1103/PhysRevB.108.174201"
