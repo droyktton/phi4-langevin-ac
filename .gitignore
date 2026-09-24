@@ -6,3 +6,4 @@ logfile.dat
 data/
 __pycache__/
 demo/
+!docs/*.png
