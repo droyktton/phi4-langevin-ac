@@ -23,11 +23,6 @@ disorder. This code simulates the same setting with a phi^4 field model:
 a circular domain in a disordered medium under a zero-bias AC field, at
 finite temperature. See [Citing](#citing).
 
-The phi^4 model with random-bond disorder is the one used in
-[vmc-phi4-depinning](https://github.com/droyktton/vmc-phi4-depinning)
-(Kolton, Ferrero & Rosso, Phys. Rev. B **108**, 174201 (2023)). That
-code solves the quasistatic depinning problem instead.
-
 ## Contents
 
 - [Quick start](#quick-start)
@@ -71,9 +66,8 @@ h(t) = h0 * cos(2 pi f t)
   5-point discrete Laplacian.
 - `r(x,y)`: quenched, uncorrelated random-bond disorder, uniform in
   `[-Delta, Delta]`. It is generated once from a counter-based RNG
-  (Philox, `Random123/`) keyed by site and disorder seed. The layout is
-  the same as in `vmc-phi4-depinning`, so the same seed gives the same
-  disorder realization in both codes.
+  (Philox, `Random123/`) keyed by site and disorder seed, so a given seed
+  always gives the same disorder realization.
 - `h(t)`: AC field with amplitude `h0` and frequency `f`. It is a cosine,
   so `f = 0` gives a constant (DC) field `h0`.
 - `eta`: Gaussian white thermal noise at temperature `T`.

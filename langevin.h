@@ -1,7 +1,7 @@
 // Langevin (stochastic Euler) solver for the disordered phi^4 model
 // driven by an AC field.
 //
-// Model (same as arXiv:2306.13415, plus thermal noise):
+// Model:
 //   dphi/dt = c*Laplacian(phi) + eps0*[r0*(1+r(x,y))*phi - phi^3] + h(t) + eta
 // with r(x,y) uncorrelated random-bond disorder, uniform in [-Delta,Delta],
 // h(t) = h0*cos(2*pi*f*t), and Gaussian white noise
@@ -53,9 +53,9 @@ typedef r123::Philox4x32 NoiseRNG;
 
 #define NOISE_KEY_TAG	0x4E4F4953u	// "NOIS": separates the noise stream from the disorder one
 
-// quenched random-bond disorder r(i,j), uniform in [-delta,delta]; same
-// counter/key layout as the VMC depinning code, so a given (seed,site)
-// gives the same disorder realization in both projects.
+// quenched random-bond disorder r(i,j), uniform in [-delta,delta],
+// generated from a counter-based RNG keyed by the site index and the
+// disorder seed, so a given (seed,site) always gives the same value.
 __device__
 float site_disorder(int site_index, unsigned long disorder_seed, float delta)
 {
