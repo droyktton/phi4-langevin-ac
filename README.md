@@ -53,6 +53,10 @@ python3 scripts/plot_contours.py contours_seed1_nseed2.dat --gif
 
 or just `scripts/run_demo.sh` (see [Demo](#demo)).
 
+**No local GPU?** The notebook [`notebooks/colab_demo.ipynb`](notebooks/colab_demo.ipynb)
+clones, compiles and runs the demo on a Google Colab GPU runtime:
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/droyktton/phi4-langevin-ac/blob/main/notebooks/colab_demo.ipynb)
+
 ## Model
 
 ```
@@ -425,6 +429,7 @@ scripts/run_demo.sh            demo run + analysis
 scripts/plot_wall_evolution.py walls / R_eff(t) / r(theta) from walls_*.dat
 scripts/extract_contours.py    phi=0 level curves (ordered, periodic-stitched) from snapshots
 scripts/plot_contours.py       grid / time series / GIF of the level curves
+notebooks/colab_demo.ipynb     clone + build + demo on Google Colab (GPU runtime)
 docs/                          figures used in this README
 Random123/                     vendored counter-based RNG (D. E. Shaw Research)
 ```
